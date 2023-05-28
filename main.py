@@ -8,6 +8,8 @@ import threading
 from tkinter import filedialog, messagebox, StringVar
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize import word_tokenize
+import itertools
+
 def search_srt(file_name, keyword1, keyword2, keyword3, search_range):
     result = []
 
@@ -52,7 +54,7 @@ def search_srt(file_name, keyword1, keyword2, keyword3, search_range):
                     url = find_url(index_k3, time_code)
                     if url:
                         result.append((url, lines[index_k3].strip()))
-
+                        
     return result
 
 class App(tk.Tk):
@@ -77,7 +79,7 @@ class App(tk.Tk):
         file_menu.add_separator()
         file_menu.add_command(label="終了", command=self.quit)
         
-        # Frame for input and search button
+        # 入力・検索ボタン
         input_frame = tk.Frame(self, bg="white")
         input_frame.pack(pady=10)
         
@@ -99,10 +101,10 @@ class App(tk.Tk):
 
         tk.Button(input_frame, text="検索", command=self.search_word, font=(self.font, 12)).grid(row=4, column=1, pady=10)
 
-        # Frame for output
+        # 出力
         output_frame = tk.Frame(self, bg="white")
         output_frame.pack(padx=50, pady=10, fill="both", expand=True)
-                # Text widget for output
+
         self.output_text = tk.Text(output_frame, wrap="word", font=(self.font, 12), state="disabled")
         self.output_text.pack(pady=10, fill="both", expand=True)
 
@@ -110,52 +112,30 @@ class App(tk.Tk):
         scrollbar.pack(side="right", fill="y")
         self.output_text.configure(yscrollcommand=scrollbar.set)
 
-        # Bind click event to output text
+
         self.output_text.tag_config("link", foreground="blue", underline=1)
         self.output_text.bind("<Button-1>", self.on_click)
 
-        # Load indicator label
+
         self.load_label = tk.Label(input_frame, text="Now Loading...", font=(self.font, 12), fg="red", bg="white")
         
-        # Window resize handling
+
         self.bind("<Configure>", self.on_resize)
-    def search_srt_from_gui(self, keywords, search_range):
-        file_name = self.file_path_var.get()
-        srt_data = self.load_srt(file_name)
-        tfidf_matrix, feature_names = self.compute_tfidf(srt_data)
 
-        self.output_text.configure(state="normal")
-        self.output_text.delete("1.0", "end")
-
-        threads = []
-        for keyword in keywords:
-            thread = threading.Thread(target=self.search_srt_threaded, args=(keyword, srt_data, tfidf_matrix, feature_names, search_range))
-            threads.append(thread)
-            thread.start()
-
-        for thread in threads:
-            thread.join()
-
-        # Combine results from all threads and sort by score
-        all_results = [thread.result for thread in threads]
-        all_results.sort(reverse=True)
-
-        for score, line in all_results:
-            self.output_text.insert("end", f"Score: {score}\n{line}\n\n")
-
-        self.output_text.configure(state="disabled")
 
     def search_word(self):
         """Search for the input words in the selected file"""
-        keywords = [self.search_word1.get(), self.search_word2.get(), self.search_word3.get()]
-        search_range = 50  # または任意の範囲値
+        search_groups = [
+            self.search_word1.get().split('|'),
+            self.search_word2.get().split('|'),
+            self.search_word3.get().split('|'),
+        ]
+        search_range = 50  # 範囲値
 
-        # Start loading indicator
         self.load_label.grid(row=4, column=0, pady=10)
         self.load_label.update()
 
-        # Start search in a new thread
-        threading.Thread(target=self.search_srt_from_gui, args=(keywords, search_range)).start()        
+        threading.Thread(target=self.search_srt_from_gui, args=(search_groups, search_range)).start()      
     def search_srt_threaded(self, keyword, srt_data, tfidf_matrix, feature_names, search_range):
         """Search for the keyword in the SRT data using a separate thread"""
         results = []
@@ -186,24 +166,6 @@ class App(tk.Tk):
         file_path = filedialog.askopenfilename()
         self.file_path_var.set(file_path)
 
-    def search_word(self):
-        """Search for the input words in the selected file"""
-        self.output_text.configure(state="normal")
-        self.output_text.delete("1.0", "end")
-
-        # Check if file path is valid
-        if not os.path.isfile(self.file_path_var.get()):
-            messagebox.showerror("Error", "Invalid file path.")
-            self.output_text.configure(state="disabled")
-            return
-
-        # Start loading indicator
-        self.load_label.grid(row=4, column=0, pady=10)
-        self.load_label.update()
-
-        # Start search in a new thread
-        threading.Thread(target=self.process_search).start()
-
     def on_click(self, event):
         index = self.output_text.index(tk.CURRENT)
         line_start = self.output_text.index(f"{index.split('.')[0]}.0")
@@ -211,11 +173,9 @@ class App(tk.Tk):
         if re.match(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+", url):
             self.open_url(url)
 
-
     def open_url(self, url):
         webbrowser.open(url, new=2)
 
-    # Move process_search method inside the App class
     def process_search(self):
         file = self.file_path_var.get()
     
@@ -268,38 +228,25 @@ class App(tk.Tk):
                 self.output_text.insert('end', current_line + '\n')
             prev_line = current_line
     
-        # Stop loading indicator
         self.load_label.grid_remove()
         self.output_text.configure(state="disabled")
     
-    def search_srt_from_gui(self, keyword1, keyword2, keyword3, search_range):
+    def search_srt_from_gui(self, search_groups, search_range):
         file_name = self.file_path_var.get()
-        search_results = search_srt(file_name, keyword1, keyword2, keyword3, search_range)
 
         self.output_text.configure(state="normal")
         self.output_text.delete("1.0", "end")
 
-        for result in search_results:
-            url, line = result
-            self.output_text.insert("end", url, "link")
-            self.output_text.insert("end", "\n" + line + "\n\n")
+        for combination in itertools.product(*search_groups):
+            search_results = search_srt(file_name, *combination, search_range)
+
+            for result in search_results:
+                url, line = result
+                self.output_text.insert("end", url, "link")
+                self.output_text.insert("end", "\n" + line + "\n\n")
 
         self.output_text.configure(state="disabled")
 
-    # search_wordメソッドを変更して、新しいsearch_srt_from_guiメソッドを呼び出す
-    def search_word(self):
-        """Search for the input words in the selected file"""
-        keyword1 = self.search_word1.get()
-        keyword2 = self.search_word2.get()
-        keyword3 = self.search_word3.get()
-        search_range = 50  # または任意の範囲値
-
-        # Start loading indicator
-        self.load_label.grid(row=4, column=0, pady=10)
-        self.load_label.update()
-
-        # Start search in a new thread
-        threading.Thread(target=self.search_srt_from_gui, args=(keyword1, keyword2, keyword3, search_range)).start()
 
 if __name__ == "__main__":
     app = App()
