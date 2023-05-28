@@ -17,7 +17,7 @@ YTSceneSearchは、YouTubeの自動生成字幕を利用してシーン検索を
 # 使い方
 
 # 下記の方法でファイルをダウンロードします。
-![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/0219516b-c6fc-4446-8eda-5cdfeb985130)
+![SCR-20230502-nfok](https://github.com/keimaruO/YTSceneSearch/assets/91080250/0219516b-c6fc-4446-8eda-5cdfeb985130)
 
 
 # 次にexeを開いて参照を押してファイルを選択してください。
@@ -25,7 +25,7 @@ YTSceneSearchは、YouTubeの自動生成字幕を利用してシーン検索を
 ホロメンの字幕モデルは
 https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
 にあります。
-![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/e894ab65-5f53-43f1-a213-7fd422b77ee8)
+
 # 検索欄の使い方を説明します。
 1がはっきり言っていたと確信できるやつ、
 2がまあ言ってかもってやつ
@@ -34,7 +34,7 @@ https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
 要は番号が若いほど記憶に自身があるようにすればおけ
 
 |記号使ってAND検索（アンド検索）できます。
-![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/811eb885-541a-4037-86a3-a1f58e742807)
+![SCR-20230502-nfok](https://github.com/keimaruO/YTSceneSearch/assets/91080250/811eb885-541a-4037-86a3-a1f58e742807)
 
 で、検索を押せばしばらくすれば下記に表示されます。ちな、3の入力欄が空欄でもダイジョブ！
 (処理が終了してもNow Loadingが消えないバグは後日修正しておきます。。。)
@@ -43,7 +43,7 @@ https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
 
 
 連絡先
-Discord 
+Discord keimaru#7680
 Twitter @keimaru114514
 
 YTSceneSearchは、 Apache 2.0ライセンスで配布されているライブラリが含まれています。
