@@ -15,7 +15,7 @@ YTSceneSearchは、YouTubeの自動生成字幕を利用してシーン検索を
 検索は少しコツいります、YouTubeの自動生成字幕が聞き取れる可能性が高く、かつ、当該シーンで実際に話されていた単語を入力する必要があります。
 
 
-ホロメンの字幕モデルはhttps://huggingface.co/datasets/keimaru/JP_Holo_Subtitles にあります。
+ホロメンの字幕モデルはhttps://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main にあります。
 
 
 連絡先
