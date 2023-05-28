@@ -19,10 +19,12 @@ YouTubeの自動生成字幕を利用してシーン検索を行います
 # 使い方
 
 # 下記の方法でファイルをダウンロードします。
-![SCR-20230502-nfok](https://github.com/keimaruO/YTSceneSearch/assets/91080250/0219516b-c6fc-4446-8eda-5cdfeb985130)
+![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/2ce79d79-ff49-47db-8622-da319e101f32)
+![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/73d49cad-3281-43cc-9312-d349cb82503d)
 
 
-# 次にexeを開いて参照を押してファイルを選択してください。
+
+# 次にダウンロードしたexeを開いて、[参照]を押してファイルを選択してください。
 
 ホロメンの字幕モデルは
 https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
@@ -36,7 +38,7 @@ https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
 要は番号が若いほど記憶に自身があるようにすればおけ
 
 |記号使ってAND検索（アンド検索）できます。
-![SCR-20230502-nfok](https://github.com/keimaruO/YTSceneSearch/assets/91080250/811eb885-541a-4037-86a3-a1f58e742807)
+![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/e8294280-c95d-4144-a3e4-87df20907f7c)
 
 で、検索を押せばしばらくすれば下記に表示されます。ちな、3の入力欄が空欄でもダイジョブ！
 (処理が終了してもNow Loadingが消えないバグは後日修正しておきます。。。)
