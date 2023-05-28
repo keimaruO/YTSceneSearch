@@ -45,6 +45,7 @@ https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
 
 検索には少しコツいります、YouTubeの自動生成字幕が聞き取れる可能性が高く、かつ、当該シーンで実際に話されていた単語を入力する必要があります。
 
+とりまそっこうで公開したなので、機能や説明が薄いですが、今後追加してきます
 
 連絡先
 Discord keimaru#7680
