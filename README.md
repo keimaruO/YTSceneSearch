@@ -19,9 +19,11 @@ YouTubeの自動生成字幕を利用してシーン検索を行います。
 
 自分がホロライブの字幕検索のためだけに作ってたので今はホロ専用です。
 
-2017/09/07～2023/04/18までの全員分の字幕あります。 https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
+2017/09/07～2023/04/18までの全員分の字幕あります。
+https://huggingface.co/datasets/keimaru/JP_Holo_Subtitles/tree/main
 
-(更新 23/06/04) チャットバージョンも作りました https://huggingface.co/keimaru/JP_Holo_chat/tree/main
+(更新 23/06/04) チャットバージョンも作りました。
+https://huggingface.co/keimaru/JP_Holo_chat/tree/main
 
 # 使い方
 
