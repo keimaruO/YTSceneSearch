@@ -27,13 +27,13 @@ https://huggingface.co/keimaru/JP_Holo_chat/tree/main
 
 # 使い方
 
-# 下記の方法でファイルをダウンロードします。
+# アプリのダウンロード方法
 ![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/2ce79d79-ff49-47db-8622-da319e101f32)
 ![image](https://github.com/keimaruO/YTSceneSearch/assets/91080250/73d49cad-3281-43cc-9312-d349cb82503d)
 
 
 
-# 次にダウンロードしたexeを開いて、[Browse]を押してファイルを選択してください。
+# ダウンロードしたexeを開いて、[Browse]を押してファイルを選択してください。
 
 
 # 検索欄の使い方を説明します。
