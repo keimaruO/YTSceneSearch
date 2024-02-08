@@ -1,60 +1,52 @@
-#version 0.1.1 bug fix
+#version 0.1.2 Improved display of search results
 
 import tkinter as tk
 import re
 import webbrowser
 import os
 import threading
+import itertools  # Import the itertools module
 from tkinter import filedialog, messagebox, StringVar
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize import word_tokenize
-import itertools
 
 def search_srt(file_name, keyword1, keyword2, keyword3, search_range):
-    result = []
 
+    result = []
     with open(file_name, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
-    def search_keyword(keyword, start_index=0, end_index=len(lines)):
-        found_indices = []
-        for index in range(start_index, end_index):
-            if keyword in lines[index]:
-                found_indices.append(index)
-        return found_indices
+    keyword_patterns = [re.compile(re.escape(word)) for word in [keyword1, keyword2, keyword3]]
 
-    def find_url(index, time_code):
-        while index >= 0:
-            if 'https://youtu.be/' in lines[index]:
-                url = lines[index].strip()
-                if "?t=" in url:
-                    url = re.sub(r'\?t=[0-9hms]+', '', url)
-                return f"{url}?t={time_code}"
-            index -= 1
-        return None
+    def is_match(line, patterns):
+        return all(pattern.search(line) for pattern in patterns)
 
-    indices_k1 = search_keyword(keyword1)
+    search_window = search_range * 2
 
-    for index_k1 in indices_k1:
-        start_index = max(0, index_k1 - search_range)
-        end_index = min(len(lines), index_k1 + search_range)
+    for i, line in enumerate(lines):
+        if is_match(line, [keyword_patterns[0]]):
+            start_index = max(0, i - search_range)
+            end_index = min(len(lines), i + search_range + 1)
 
-        indices_k2 = search_keyword(keyword2, start_index, end_index)
-
-        for index_k2 in indices_k2:
-            start_index = max(0, index_k2 - search_range)
-            end_index = min(len(lines), index_k2 + search_range)
-
-            indices_k3 = search_keyword(keyword3, start_index, end_index)
-
-            for index_k3 in indices_k3:
-                time_code_match = re.search(r'(\d+h)?(\d+m)?(\d+s)', lines[index_k3 - 1])
-                if time_code_match:
-                    time_code = time_code_match.group(0)
-                    url = find_url(index_k3, time_code)
-                    if url:
-                        result.append((url, lines[index_k3].strip()))
+            for j in range(start_index, end_index):
+                if is_match(lines[j], keyword_patterns[1:]):
+                    time_code_match = re.search(r'(\d+h)?(\d+m)?(\d+s)', lines[j - 1])
+                    if time_code_match:
+                        time_code = time_code_match.group(0)
+                        url = find_url(lines, j, time_code)
+                        if url:
+                            result.append((url, lines[j].strip()))
     return result
+
+def find_url(lines, index, time_code):
+
+    for i in range(index, -1, -1):
+        if 'https://youtu.be/' in lines[i]:
+            url = lines[i].strip()
+            if "?t=" in url:
+                url = re.sub(r'\?t=[0-9hms]+', '', url)
+            return f"{url}?t={time_code}"
+    return None
 
 class App(tk.Tk):
     def __init__(self):
@@ -132,7 +124,7 @@ class App(tk.Tk):
 
 
     def search_word(self):
-        """Search for the input words in the selected file"""
+        # ... 
         search_groups = [
             self.search_word1.get().split('|'),
             self.search_word2.get().split('|'),
@@ -143,7 +135,7 @@ class App(tk.Tk):
         self.load_label.grid(row=4, column=0, pady=10)
         self.load_label.update()
 
-        threading.Thread(target=self.search_srt_from_gui, args=(search_groups, search_range)).start()      
+        threading.Thread(target=self.search_srt_from_gui, args=(search_groups, search_range)).start()     
     def search_srt_threaded(self, keyword, srt_data, tfidf_matrix, feature_names, search_range):
         """Search for the keyword in the SRT data using a separate thread"""
         results = []
@@ -261,7 +253,18 @@ class App(tk.Tk):
     
         self.output_text.configure(state="disabled")
         self.after(0, self.load_label.grid_remove)
-
+def parallel_search_srt_files(file_list, keywords):
+    with ThreadPoolExecutor() as executor:
+        future_to_file = {executor.submit(search_srt, file, keywords): file for file in file_list}
+        results = {}
+        for future in concurrent.futures.as_completed(future_to_file):
+            file_name = future_to_file[future]
+            try:
+                file_name, matches = future.result()
+                results[file_name] = matches
+            except Exception as exc:
+                print(f'{file_name} generated an exception: {exc}')
+        return results
 if __name__ == "__main__":
     app = App()
     app.mainloop()
